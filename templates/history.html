@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan History | SentinelURL</title>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Header / Navigation Bar -->
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <span class="logo-text">Sentinel<span>URL</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}"><i class="fa-solid fa-radar"></i> Scanner</a></li>
+                <li><a href="{{ url_for('history') }}" class="active"><i class="fa-solid fa-clock-rotate-left"></i> Scan History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        
+        <!-- History Table Card -->
+        <section class="history-card">
+            
+            <div class="history-header">
+                <h2 style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.6rem;">
+                    <i class="fa-solid fa-clock-rotate-left" style="color: var(--color-accent);"></i> 
+                    Scan Intelligence History
+                </h2>
+                
+                <!-- Client-side real-time filter input -->
+                <div class="input-wrapper" style="max-width: 320px; width: 100%;">
+                    <i class="fa-solid fa-magnifying-glass input-icon"></i>
+                    <input 
+                        type="text" 
+                        id="history-search" 
+                        class="scanner-input" 
+                        placeholder="Search URL or Risk Level..."
+                        style="padding: 0.6rem 1rem 0.6rem 2.5rem; font-size: 0.9rem;"
+                    >
+                </div>
+            </div>
+
+            {% if scans %}
+                <div class="table-wrapper">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Scan ID</th>
+                                <th>Submitted URL</th>
+                                <th>Risk Score</th>
+                                <th>Risk Level</th>
+                                <th>Scan Time</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scan in scans %}
+                                <tr>
+                                    <td>#{{ scan.id }}</td>
+                                    <td class="td-url" title="{{ scan.url }}">{{ scan.url }}</td>
+                                    <td style="font-weight: 700; font-family: 'Fira Code', monospace;">
+                                        {{ scan.risk_score }}/100
+                                    </td>
+                                    <td>
+                                        <span class="badge-risk-sm {{ scan.risk_level }}">
+                                            {{ scan.risk_level }}
+                                        </span>
+                                    </td>
+                                    <td>{{ scan.scan_time }}</td>
+                                    <td>
+                                        <a href="{{ url_for('report', scan_id=scan.id) }}" class="btn-table-action">
+                                            <i class="fa-solid fa-eye"></i> View Report
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="no-history">
+                    <i class="fa-solid fa-database"></i>
+                    <p style="font-size: 1.1rem; margin-top: 1rem;">No scan records found in the database.</p>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        URLs scanned via the SentinelURL Dashboard will persist here.
+                    </p>
+                    <a href="{{ url_for('index') }}" class="btn-secondary" style="display: inline-flex; margin-top: 1.5rem;">
+                        <i class="fa-solid fa-bolt"></i> Scan Your First URL
+                    </a>
+                </div>
+            {% endif %}
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 SentinelURL. Built for Cybersecurity + AI Academic Demonstration.</p>
+        <p>Powered by <a href="https://groq.com/" target="_blank">Groq API</a> &bull; Flask &bull; SQLite3</p>
+    </footer>
+
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

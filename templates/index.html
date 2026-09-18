@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Phishing URL Detector | Cyber Sentinel</title>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Header / Navigation Bar -->
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <span class="logo-text">Sentinel<span>URL</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="active"><i class="fa-solid fa-radar"></i> Scanner</a></li>
+                <li><a href="{{ url_for('history') }}"><i class="fa-solid fa-clock-rotate-left"></i> Scan History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        
+        <!-- Flash Messages Container -->
+        <div class="alert-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'error' }}">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>AI-Powered Phishing URL Detection System</h1>
+            <p>
+                A high-performance cybersecurity application leveraging static analysis, threat intelligence rules, 
+                and advanced AI explanations to intercept malicious link threats.
+            </p>
+        </section>
+
+        <!-- URL Scanner Card -->
+        <section class="scanner-card">
+            <div class="scanner-title">
+                <i class="fa-solid fa-magnifying-glass-shield"></i>
+                <span>Enter URL for Real-Time Threat Analysis</span>
+            </div>
+            
+            <form id="scan-form" action="{{ url_for('analyze') }}" method="POST" class="scanner-form">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-link input-icon"></i>
+                    <input 
+                        type="text" 
+                        name="url" 
+                        id="url-input" 
+                        class="scanner-input" 
+                        placeholder="https://paytm-secure-login.xyz" 
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+                <button type="submit" id="scan-btn" class="scanner-btn">
+                    <i class="fa-solid fa-bolt"></i> Analyze Link
+                </button>
+            </form>
+
+            <!-- Loading State Indicator -->
+            <div id="scan-loader" class="scan-loader">
+                <div class="radar-spinner"></div>
+                <div class="loader-text">RUNNING CYBER SECURITY DIAGNOSTICS...</div>
+            </div>
+        </section>
+
+        <!-- Feature Showcases -->
+        <section class="features-container">
+            <h2 class="features-title"><i class="fa-solid fa-circle-nodes"></i> Advanced Security Capabilities</h2>
+            <div class="features-grid">
+                
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-code"></i></div>
+                    <h3>Multi-Stage Analysis</h3>
+                    <p>Parses SSL schemes, structural keywords, IP addresses, custom subdomains, and suspicious TLD suffixes in real-time.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                    <h3>Risk Calculator</h3>
+                    <p>Applies granular weighted risk points to anomalies, classification thresholds, and produces a score scaled up to 100.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h3>AI Threat Analyst</h3>
+                    <p>Integrates Groq's Llama model to compile structural explanations, security impact details, and countermeasures.</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 SentinelURL. Built for Cybersecurity + AI Academic Demonstration.</p>
+        <p>Powered by <a href="https://groq.com/" target="_blank">Groq API</a> &bull; Flask &bull; SQLite3</p>
+    </footer>
+
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

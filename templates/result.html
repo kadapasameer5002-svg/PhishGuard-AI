@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Report | SentinelURL</title>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Header / Navigation Bar -->
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <span class="logo-text">Sentinel<span>URL</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}"><i class="fa-solid fa-radar"></i> Scanner</a></li>
+                <li><a href="{{ url_for('history') }}"><i class="fa-solid fa-clock-rotate-left"></i> Scan History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        
+        <div class="action-bar" style="margin-bottom: 1.5rem;">
+            <a href="{{ url_for('index') }}" class="btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Scan Another URL
+            </a>
+        </div>
+
+        <!-- Report Page Grid -->
+        <div class="report-grid result-{{ result.risk_level|lower }}">
+            
+            <!-- Left Side: Risk Level Gauge & Summary -->
+            <aside class="report-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <h2 class="section-title"><i class="fa-solid fa-chart-pie"></i> Risk Evaluation</h2>
+                    
+                    <div class="gauge-container">
+                        <!-- Conic-gradient percentage will be updated dynamically via JS -->
+                        <div class="score-circle" data-score="{{ result.risk_score }}" style="--score-percent: 0;">
+                            <span class="score-number">0</span>
+                            <span class="score-total">/ 100</span>
+                        </div>
+                        <span class="risk-badge">{{ result.risk_level }}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <div class="risk-stat-item">
+                        <span class="risk-stat-label">SSL Protocol:</span>
+                        <span class="risk-stat-value">
+                            {% if "HTTPS Missing" in result.detected_issues %}
+                                <span style="color: var(--color-high); font-weight: bold;">Unencrypted (HTTP)</span>
+                            {% else %}
+                                <span style="color: var(--color-low); font-weight: bold;">Secure (HTTPS)</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="risk-stat-item">
+                        <span class="risk-stat-label">Analyzed URL:</span>
+                        <span class="risk-stat-value" title="{{ result.url }}">{{ result.url }}</span>
+                    </div>
+                    <div class="risk-stat-item">
+                        <span class="risk-stat-label">Scan Timestamp:</span>
+                        <span class="risk-stat-value">{{ result.scan_time }}</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Side: Detailed Findings, AI analysis, Recommendations -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                
+                <!-- Section 1: Detected Indicators Checklist -->
+                <section class="report-card">
+                    <h2 class="section-title"><i class="fa-solid fa-microscope"></i> Static Analysis Indicators</h2>
+                    
+                    {% if result.detected_issues %}
+                        <ul class="issue-list">
+                            {% for issue in result.detected_issues %}
+                                <li class="issue-item {% if 'Missing' in issue or 'Detected' in issue or 'TLD' in issue or 'Character' in issue %}danger{% else %}warning{% endif %}">
+                                    <i class="fa-solid fa-triangle-exclamation issue-icon"></i>
+                                    <span>{{ issue }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="clean-message">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>No common phishing indicators detected. The link complies with static safety rules.</span>
+                        </div>
+                    {% endif %}
+                </section>
+
+                <!-- Section 2: AI Security Analysis -->
+                <section class="report-card">
+                    <h2 class="section-title"><i class="fa-solid fa-brain"></i> AI Security Analysis (Groq Llama)</h2>
+                    <div class="ai-box">
+                        <p class="ai-text">{{ result.ai_analysis }}</p>
+                    </div>
+                </section>
+
+                <!-- Section 3: Recommendations Checklist -->
+                <section class="report-card">
+                    <h2 class="section-title"><i class="fa-solid fa-circle-check"></i> Security Recommendations</h2>
+                    
+                    <div class="rec-grid">
+                        {% for rec in result.recommendations %}
+                            <div class="rec-item">
+                                <i class="fa-solid fa-shield-halved rec-icon"></i>
+                                <span>{{ rec }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 SentinelURL. Built for Cybersecurity + AI Academic Demonstration.</p>
+        <p>Powered by <a href="https://groq.com/" target="_blank">Groq API</a> &bull; Flask &bull; SQLite3</p>
+    </footer>
+
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
